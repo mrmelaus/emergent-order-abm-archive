@@ -1,0 +1,6 @@
+# === macOS / Python cache noise only ===
+# Data and analysis folders are intentionally included in full for
+# the CoMSES archival package — nothing else is excluded.
+.DS_Store
+__pycache__/
+*.pyc

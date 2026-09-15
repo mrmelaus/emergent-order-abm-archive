@@ -1,0 +1,7 @@
+Completed at: 2026-08-11T17:49:53.849518
+Target universes: 5000
+Global seed: 7777
+Model version: v1
+K_VOYAGES: 30
+Multiprocessing context: spawn
+Parameter overrides: {'despair_rate': 0.032, 'drought_enabled': 0.0}

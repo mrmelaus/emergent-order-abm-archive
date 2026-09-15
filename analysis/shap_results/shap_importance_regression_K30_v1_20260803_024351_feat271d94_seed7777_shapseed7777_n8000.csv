@@ -1,0 +1,14 @@
+feature,mean_abs_shap
+drought_enabled,1.3242339
+w1_energy,1.2171717
+intervention_quarter,0.8887097
+threshold,0.8735938
+intervention_type,0.78611267
+intervention_coverage,0.6492009
+despair_rate,0.5442649
+w4_policy,0.21114056
+w3_rebellion,0.15616874
+w2_drought,0.15276003
+w5_social,0.0823379
+rebellion_sentence_weight,0.023533404
+natural_death_rate_quarterly,0.018957315

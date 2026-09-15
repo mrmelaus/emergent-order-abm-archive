@@ -1,0 +1,2 @@
+target,run_tag,shap_tag,param_a,param_b,mean_abs_shap_interaction,note
+regression,K30_v1_20260803_024351,featbf16ef_seed7777_shapseed7777_n8000,w1_energy,w4_policy,0.25516525,"SHAP interaction magnitude is in outcome units, not a variance proportion; compare qualitatively against the corresponding Sobol S2, not numerically."
