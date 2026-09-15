@@ -34,8 +34,11 @@ except ImportError:
 # ============================================================================
 
 class Config:
-    # Paths
-    BASE_PATH = Path("/Users/L/Documents/Emergent-Order-ABM/analysis/figures")
+    # Paths — resolved relative to this script's own location, so the
+    # archive runs correctly regardless of where it's extracted/cloned.
+    _THIS_DIR = Path(__file__).resolve().parent
+    _PROJECT_ROOT = _THIS_DIR.parent
+    BASE_PATH = _PROJECT_ROOT / "analysis" / "figures"
     SUBMISSION_PATH = BASE_PATH / "submission"
     BACKUP_PATH = SUBMISSION_PATH / "backup"
     MANIFEST_PATH = SUBMISSION_PATH / "submission_manifest.csv"

@@ -127,6 +127,51 @@ omitted.
 | D_t (drought index) | universe-wide, per quarter | Derived from the historical annual drought reconstruction, held constant across the four quarters of a historical year, and set to 0 in every quarter when drought is disabled |
 | current ration level | universe-wide, per quarter | Derived from a lagged rolling accumulation of drought exposure (see Ration determination below) |
 
+### Behavioural Parameter Glossary
+
+The rebellion decision function (see Submodels below) combines seven
+universe-level parameters. Their semantic meaning is:
+
+| Parameter | Meaning | Sampling range |
+|---|---|---:|
+| `w1` | Energy deprivation weight — how strongly physiological energy shortfall drives rebellion probability | [0.01, 0.08] |
+| `w2` | Drought pressure weight — how strongly the current drought index drives rebellion probability | [0.2, 1.0] |
+| `w3` | Baseline rebellion weight — how strongly an agent's inherent, sentence-derived rebellion propensity drives the decision function | [0.1, 0.5] |
+| `w4` | Institutional suppression weight — how strongly policy state (`Assigned` / `TicketOfLeave` / `Emancipist`) suppresses rebellion | [0.8, 2.5] |
+| `w5_social` | Social contagion weight — how strongly peer rebellion rate within an agent's voyage cohort drives rebellion probability | [0.1, 1.0] |
+| `despair_rate` | Rate of structural despair accumulation per quarter spent unpromoted in `Assigned` status | [0.003, 0.032] |
+| `rebel_threshold` | Probability threshold above which an agent transitions to `ActiveRebellion` | [0.58, 0.72] |
+
+### Agent State-Transition Diagram
+
+```mermaid
+stateDiagram-v2
+    [*] --> Assigned: initialisation
+
+    Assigned --> TicketOfLeave: compliance_score > 115\n(automatic promotion)
+    Assigned --> TicketOfLeave: policy intervention\n(Carrot or Stick, if eligible)
+    Assigned --> ActiveRebellion: P_rebel > rebel_threshold
+    Assigned --> Deceased: energy <= 0, or\nnatural mortality check
+
+    TicketOfLeave --> ActiveRebellion: P_rebel > rebel_threshold
+    TicketOfLeave --> Deceased: energy <= 0, or\nnatural mortality check
+
+    ActiveRebellion --> Assigned: amnesty return\n(drought < 0.4, prob. 0.20)
+    ActiveRebellion --> Deceased: energy <= 0\n(survival/foraging dynamic)
+
+    Deceased --> [*]
+
+    note right of TicketOfLeave
+        Emancipist exists in the
+        state machine for
+        representational fidelity
+        but is unreachable under
+        every transition rule in
+        the current specification
+        (see note above).
+    end note
+```
+
 ### Scales
 
 - **Temporal extent**: 40 quarters (10 simulated years) per universe.
@@ -196,6 +241,37 @@ omitted.
    population in `ActiveRebellion`), update peak mutiny rate, and — on
    the first quarter in which the mutiny rate reaches or exceeds the
    collapse threshold (20%) — record `collapse_quarter`.
+
+### Quarterly loop — process flow diagram
+
+```mermaid
+flowchart TD
+    A[Start quarter t] --> B[Drought update:\ncompute D_t, write to history array]
+    B --> C[Ration update:\ncompute ration_t from accumulated drought exposure]
+    C --> D[Filter to alive agents]
+    D --> E{t == intervention_quarter?}
+    E -- yes --> F[Apply Carrot/Stick modifiers;\npromote eligible agents to TicketOfLeave]
+    E -- no --> G[Voyage-level aggregation:\ncompute PeerRate per voyage]
+    F --> G
+    G --> H[Per-agent update loop]
+    H --> H1[Check automatic promotion\ncompliance_score > 115]
+    H1 --> H2[Compute agent's PeerRate]
+    H2 --> H3{In ActiveRebellion?}
+    H3 -- yes --> H4[Survival/foraging dynamic;\namnesty-return check]
+    H3 -- no --> H5[Metabolic depletion;\ndespair accumulation;\nrebellion decision function]
+    H5 --> H6{Rebels this quarter?}
+    H6 -- yes --> H7[Transition to ActiveRebellion]
+    H6 -- no --> H8[Production + compliance accrual]
+    H4 --> I[Next agent]
+    H7 --> I
+    H8 --> I
+    I --> J{More agents?}
+    J -- yes --> H
+    J -- no --> K[Aggregate quarter outcomes:\nmutiny rate, peak_mutiny,\ncollapse_quarter if threshold crossed]
+    K --> L{t == 40?}
+    L -- no --> A
+    L -- yes --> M[Return universe result record]
+```
 
 ### End-of-universe output
 

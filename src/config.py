@@ -262,6 +262,28 @@ STICK_COVERAGE_MODIFIER_RANGE = (0.5, 0.8)
 # Parameter Bounds for Sobol Sensitivity Analysis
 # Centralized here so worker.py and sobol_runner.py stay in sync.
 # ============================================================
+# =====================================================================
+# PARAMETER SEMANTIC GLOSSARY
+#
+# w1 (Energy deprivation weight)      — how strongly physiological
+#   energy shortfall drives rebellion probability
+# w2 (Drought pressure weight)        — how strongly the current
+#   drought index drives rebellion probability
+# w3 (Baseline rebellion weight)      — how strongly an agent's
+#   inherent, sentence-derived rebellion propensity drives the
+#   decision function
+# w4 (Institutional suppression weight) — how strongly policy state
+#   (Assigned / TicketOfLeave / Emancipist) suppresses rebellion
+# w5_social (Social contagion weight) — how strongly peer rebellion
+#   rate within an agent's voyage cohort drives rebellion probability
+# despair_rate                        — rate of structural despair
+#   accumulation per quarter spent unpromoted in Assigned status
+# rebel_threshold                     — probability threshold above
+#   which an agent transitions to ActiveRebellion
+#
+# See MODEL_DOCUMENTATION.md (Submodels: Rebellion decision function)
+# for the full logistic specification combining these weights.
+# =====================================================================
 PARAM_BOUNDS = {
     "w1": (0.01, 0.08),
     "w2": (0.2, 1.0),
